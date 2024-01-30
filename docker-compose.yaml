@@ -1,0 +1,27 @@
+services:
+  monk:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ${CONTAINER_NAME}
+    command: ["uvicorn", "main:app", "--reload", "--proxy-headers", "--host", "0.0.0.0", "--port", "${PORT}"]
+    volumes:
+      - "./fastapi-logs:/src/logs"
+      - "./${APPLICATION_DIR}:/root/${APPLICATION_DIR}"
+    ports:
+      - "${PORT}:${PORT}"
+    networks:
+      - traefik
+
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:8.8.2
+    container_name: filebeat
+    volumes:
+      - "./filebeat.yml:/usr/share/filebeat/filebeat.yml"
+      - "./fastapi-logs:/src/logs"
+    networks:
+      - traefik
+
+networks:
+  traefik:
+    external: true

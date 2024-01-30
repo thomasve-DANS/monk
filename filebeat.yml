@@ -1,0 +1,23 @@
+name: "monk"
+logging.metrics.enabled: false
+xpack.security.enabled: false
+xpack.monitoring.enabled: false
+setup.ilm.enabled: false
+setup.template.enabled: false
+
+filebeat.inputs:
+- type: log
+  scan_frequency: 1s
+  enabled: true
+  paths:
+    - /src/logs/monk.*
+  fields:
+    - service: fastapi-app
+  fields_under_root: true
+
+output.elasticsearch:
+  hosts: ["search.elastic.dansdemo.nl:443"]
+  index: "message"
+  api_key: "HTSbbIkB1TSdrH7QW3qG:TTwAyqXTTQyde5oqbkBkYQ"
+  protocol: "https"
+  ssl.verification_mode: "strict"
